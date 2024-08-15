@@ -1,0 +1,386 @@
+﻿#include "raylib.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define WIDTH 1600
+#define HEIGHT 900
+#define REC_WIDTH_SIZE 60
+#define REC_HEIGHT_SIZE 100
+#define BOARD_WIDTH_SIZE 8
+#define BOARD_HEIGHT_SIZE 6
+#define LAYER 3
+#define MAX_VALUE 12
+#define MAX_IMAGES 12
+Texture2D backgroundTexture;
+Texture2D tileTextures[MAX_IMAGES * 2];
+Sound sound;
+Sound soundx;
+
+
+// Taþ yapýsý
+typedef struct {
+    int value; // Taþýn deðeri
+    bool isOpen; // Taþ açýk mý kapalý mý?
+} Tile;
+
+// 3 boyutlu oyun tahtasý yapýsý
+typedef struct {
+    Tile tiles[BOARD_HEIGHT_SIZE][BOARD_WIDTH_SIZE][LAYER]; // Taþlarýn bulunduðu matris
+} Board3D;
+typedef enum { MENU, GAME, END } GameState;
+
+Board3D gameBoard; // 3 boyutlu oyun tahtasý
+Vector3 selectedTile1 = { -1, -1, -1 }; // Seçili taþlarýn koordinatlarý
+Vector3 selectedTile2 = { -1, -1, -1 };
+int score = 0;
+
+int boardX, boardY, boardWidth, boardHeight; // Tahta konum ve boyutlarý
+int buttonWidth = 200;
+int buttonHeight = 50;
+int buttonSpacing = 20;
+
+// Oyun durumu
+GameState gameState = MENU;
+
+// Frekans dizisi
+int frequency[MAX_VALUE + 1] = { 0 }; // Taþ deðerlerinin frekansýný saklamak için dizi
+
+// Fonksiyon prototipleri
+void initializeBoard();
+void drawBoard();
+void drawMenu();
+void selectTile(int x, int y, int z);
+void checkMatch();
+bool canSelectTile(int x, int y, int z);
+void startLevel1();
+
+int main(void)
+{
+    InitWindow(WIDTH, HEIGHT, "3D Tile Matching Game");
+
+    InitAudioDevice();
+
+    initializeBoard();
+
+    while (!WindowShouldClose())
+    {
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+
+        switch (gameState)
+        {
+        case MENU:
+            drawMenu();
+            break;
+        case GAME:
+            drawBoard();
+            checkMatch();
+            DrawText(TextFormat("Score: %d", score), 10, 10, 20, BLACK);
+            break;
+        case END:
+            DrawText(
+                "Game Over", GetScreenWidth() / 2 - MeasureText("Game Over", 40) / 2, GetScreenHeight() / 2 - 20, 40, RED);
+            break;
+        }
+
+        EndDrawing();
+    }
+    CloseAudioDevice();
+    CloseWindow();
+    return 0;
+}
+
+
+void initializeBoard()
+{
+    backgroundTexture = LoadTexture("arkaplan.png");
+    sound = LoadSound("click.mp3");
+    soundx = LoadSound("match.mp3");
+
+    // Initialize random seed
+    srand(time(NULL));
+
+    // Load textures
+    for (int i = 0; i < MAX_IMAGES * 2; i++)
+    {
+        char filename[25];
+        sprintf(filename, "%d.png", i + 1); // Assuming your image files are named 1.png, 2.png, ..., 12.png
+        tileTextures[i] = LoadTexture(filename);
+    }
+
+    // Initialize game board matrix
+    for (int i = 0; i < BOARD_HEIGHT_SIZE; i++)
+    {
+        for (int j = 0; j < BOARD_WIDTH_SIZE; j++)
+        {
+            for (int k = 0; k < LAYER; k++)
+            {
+                gameBoard.tiles[i][j][k].value = (rand() % MAX_VALUE) + 1;
+                gameBoard.tiles[i][j][k].isOpen = false;
+            }
+        }
+    }
+}
+void drawBoard()
+{
+    // Calculate board dimensions
+    boardWidth = BOARD_WIDTH_SIZE * REC_WIDTH_SIZE;
+    boardHeight = BOARD_HEIGHT_SIZE * REC_HEIGHT_SIZE;
+
+    // Calculate board position
+    boardX = (GetScreenWidth() - boardWidth) / 2;
+    boardY = (GetScreenHeight() - boardHeight) / 2;
+
+    // Draw background image
+    DrawTexture(backgroundTexture, 0, 0, WHITE);
+
+    // Iterate over each tile on the board
+    for (int k = LAYER - 1; k >= 0; k--)
+    {
+        for (int i = 0; i < BOARD_HEIGHT_SIZE; i++)
+        {
+            for (int j = 0; j < BOARD_WIDTH_SIZE; j++)
+            {
+                if (gameBoard.tiles[i][j][k].value != -1)
+                {
+                    // Get the texture index based on the tile value
+                    int textureIndex = gameBoard.tiles[i][j][k].value - 1;
+
+                    // Draw the texture
+                    DrawTexture(tileTextures[textureIndex], boardX + j * REC_WIDTH_SIZE + k * 6, boardY + i * REC_HEIGHT_SIZE + k * 6, WHITE);
+
+                    if (selectedTile1.x == j && selectedTile1.y == i && selectedTile1.z == k)
+                    {
+                        // Seçili taşın üzerini maviye boyayın
+                        DrawTexture(tileTextures[textureIndex], boardX + j * REC_WIDTH_SIZE + k * 6, boardY + i * REC_HEIGHT_SIZE + k * 6, Fade(DARKBLUE, 0.7f));
+                    }
+                }
+            }
+        }
+    }
+}
+void drawMenu()
+{
+    DrawTexture(backgroundTexture, 0, 0, WHITE);
+    int buttonX = GetScreenWidth() / 2 - buttonWidth / 2;
+    int buttonSpacing = 20; // Butonlar arasındaki boşluk
+    int level1ButtonY = GetScreenHeight() / 2 - buttonHeight - buttonSpacing;
+    int level2ButtonY = level1ButtonY + buttonHeight + buttonSpacing; // Yükseklik artışı
+    int level3ButtonY = level2ButtonY + buttonHeight + buttonSpacing; // Yükseklik artışı
+
+    // MAHJONG yazısı
+    DrawText("MAHJONG", GetScreenWidth() / 2 - MeasureText("MAHJONG", 100) / 2, 80, 100, RAYWHITE);
+
+    DrawRectangle(buttonX, level1ButtonY, buttonWidth, buttonHeight, GRAY);
+    DrawRectangle(buttonX, level2ButtonY, buttonWidth, buttonHeight, GRAY);
+    DrawRectangle(buttonX, level3ButtonY, buttonWidth, buttonHeight, GRAY);
+
+    DrawText("EASY", buttonX + buttonWidth / 2 - MeasureText("LEVEL 1", 15) / 2, level1ButtonY + buttonHeight / 2 - 10, 20, WHITE);
+    DrawText("MEDIUM", buttonX + buttonWidth / 2 - MeasureText("LEVEL 2", 20) / 2, level2ButtonY + buttonHeight / 2 - 10, 20, WHITE);
+    DrawText("HARD", buttonX + buttonWidth / 2 - MeasureText("LEVEL 3", 15) / 2, level3ButtonY + buttonHeight / 2 - 10, 20, WHITE);
+
+    if (CheckCollisionPointRec(GetMousePosition(), (Rectangle) { buttonX, level1ButtonY, buttonWidth, buttonHeight }))
+    {
+        DrawRectangle(buttonX, level1ButtonY, buttonWidth, buttonHeight, Fade(SKYBLUE,0.4f));
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        {
+            startLevel1();
+        }
+    }
+    else if (CheckCollisionPointRec(GetMousePosition(), (Rectangle) { buttonX, level2ButtonY, buttonWidth, buttonHeight }))
+    {
+        DrawRectangle(buttonX, level2ButtonY, buttonWidth, buttonHeight, Fade(SKYBLUE, 0.4f));
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        {
+            // Burada seviye 2'yi başlat
+        }
+    }
+    else if (CheckCollisionPointRec(GetMousePosition(), (Rectangle) { buttonX, level3ButtonY, buttonWidth, buttonHeight }))
+    {
+        DrawRectangle(buttonX, level3ButtonY, buttonWidth, buttonHeight, Fade(SKYBLUE, 0.4f));
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        {
+            // Burada seviye 3'ü başlat
+        }
+    }
+}
+
+void startLevel1()
+{
+    initializeBoard();
+    // Diğer başlangıç ayarlarını yapabilirsiniz, örneğin skoru sıfırlayabilirsiniz
+    score = 0;
+    // Oyun durumunu oynanabilir hale getirir, başka düğmelerin etkileşimini etkinleştirebilir
+    gameState = GAME;
+}
+void checkMatch()
+{
+    int frequencyTwo = 0;
+    // Her eþleþme kontrolünden önce bayraðý sýfýrla
+    static bool alreadyPrinted = false; // Potansiyel eþleþmeleri yalnýzca bir kez yazdýrmak için bayrak
+
+    bool selected[BOARD_HEIGHT_SIZE][BOARD_WIDTH_SIZE][LAYER] = { false };
+
+    int matchesAvailable = 0; // Eþleþebilecek taþ sayýsýný saklamak için sayaç
+    int matchValues[BOARD_WIDTH_SIZE * BOARD_HEIGHT_SIZE * LAYER] = { 0 }; // Eþleþebilecek taþlarýn deðerlerini saklamak için dizi
+    int matchCount[BOARD_WIDTH_SIZE * BOARD_HEIGHT_SIZE * LAYER] = { 0 }; // Eþleþen taþlarýn frekansýný saklamak için dizi
+
+    // Potansiyel eþleþmeleri yalnýzca bir kez yazdýrmak için bayraðý sýfýrla
+    alreadyPrinted = false;
+
+    // Tahtadaki her bir kareyi ziyaret et
+    bool isAvailable = false;
+    for (int i = 0; i < BOARD_HEIGHT_SIZE; i++)
+    {
+        for (int j = 0; j < BOARD_WIDTH_SIZE; j++)
+        {
+            for (int k = 0; k < LAYER; k++) {
+                if (gameBoard.tiles[i][j][k].value != -1 && canSelectTile(j, i, k))
+                {
+                    // Eþleþebilecek taþlarý diziye ekle
+                    matchValues[matchesAvailable] = gameBoard.tiles[i][j][k].value;
+                    matchesAvailable++;
+                    isAvailable = true;
+                    break;
+                }
+            }
+        }
+        for (int i = 1; i < BOARD_WIDTH_SIZE * BOARD_HEIGHT_SIZE * LAYER / 2; i++)
+        {
+            if (matchValues[i] == 2)
+            {
+                frequencyTwo++;
+            }
+        }
+        if (isAvailable) break;
+    }
+
+    // Her fare týklamasýnda kontrol edilecek
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+    {
+        // Fare konumunu al
+        int mouseX = GetMouseX();
+        int mouseY = GetMouseY();
+
+        // Tahtanýn içinde mi kontrol et
+        if (mouseX >= boardX && mouseX < boardX + boardWidth && mouseY >= boardY && mouseY < boardY + boardHeight)
+        {
+            int x = (mouseX - boardX) / REC_WIDTH_SIZE;
+            int y = (mouseY - boardY) / REC_HEIGHT_SIZE;
+
+            // Tüm katmanlarý gezmek için döngü
+            for (int z = 0; z < LAYER; z++) {
+                // Seçilen taþa týklanabilir mi kontrol et
+                if (canSelectTile(x, y, z))
+                {
+                    // Seçili taþý güncelle
+                    selectTile(x, y, z);
+
+                    // Ýki taþ seçildi mi kontrol et
+                    if (selectedTile1.x != -1 && selectedTile1.y != -1 && selectedTile2.x != -1 && selectedTile2.y != -1)
+                    {
+                        // Eþleþmeyi kontrol et
+                        if (gameBoard.tiles[(int)selectedTile1.y][(int)selectedTile1.x][(int)selectedTile1.z].value == gameBoard.tiles[(int)selectedTile2.y][(int)selectedTile2.x][(int)selectedTile2.z].value)
+                        {
+                            // Eþleþen taþlarý kaldýr
+                            gameBoard.tiles[(int)selectedTile1.y][(int)selectedTile1.x][(int)selectedTile1.z].value = -1;
+                            gameBoard.tiles[(int)selectedTile2.y][(int)selectedTile2.x][(int)selectedTile2.z].value = -1;
+                            selectedTile1.x = -1;
+                            selectedTile1.y = -1;
+                            selectedTile1.z = -1;
+                            selectedTile2.x = -1;
+                            selectedTile2.y = -1;
+                            selectedTile2.z = -1;
+
+                            PlaySound(soundx);
+                            score += 5;
+                        }
+                        else
+                        {
+                            // Eþleþme yoksa taþlarý seçilmemiþ yap
+                            gameBoard.tiles[(int)selectedTile1.y][(int)selectedTile1.x][(int)selectedTile1.z].isOpen = false;
+                            gameBoard.tiles[(int)selectedTile2.y][(int)selectedTile2.x][(int)selectedTile2.z].isOpen = false;
+                            selectedTile1.x = -1;
+                            selectedTile1.y = -1;
+                            selectedTile1.z = -1;
+                            selectedTile2.x = -1;
+                            selectedTile2.y = -1;
+                            selectedTile2.z = -1;
+                        }
+
+                        // Her eþleþme sonrasýnda potansiyel eþleþmeleri yeniden kontrol et
+                        alreadyPrinted = false;
+                    }
+                    break; // Eþleþme kontrolünden sonra döngüyü sonlandýr
+                }
+            }
+        }
+    }
+}
+
+
+bool isFirstTileSelected = false; // Ýlk taþ seçildi mi?
+bool isSecondTileSelected = false; // Ýkinci taþ seçildi mi?
+
+void selectTile(int x, int y, int z)
+{
+    // İlk taş seçildiğinde
+    if (!isFirstTileSelected) {
+        selectedTile1.x = x;
+        selectedTile1.y = y;
+        selectedTile1.z = z;
+        isFirstTileSelected = true;
+        gameBoard.tiles[y][x][z].isOpen = true; // Taş aç
+        PlaySound(sound);
+
+    }
+
+    else if (!isSecondTileSelected) {
+        selectedTile2.x = x;
+        selectedTile2.y = y;
+        selectedTile2.z = z;
+        isSecondTileSelected = true;
+        gameBoard.tiles[y][x][z].isOpen = true; // Taşý aç
+        PlaySound(sound);
+
+        //Eşleşme kontrolünden sonra frekansı kontrol et
+        checkMatch();
+
+        // Ýki taş seçildikten sonra seçimleri sıfırla
+        isFirstTileSelected = false;
+        isSecondTileSelected = false;
+    }
+}
+bool canSelectTile(int x, int y, int z)
+{
+    // Taşın board sınırları içinde olup olmadığını kontrol et
+    if (x >= 0 && x < BOARD_WIDTH_SIZE && y >= 0 && y < BOARD_HEIGHT_SIZE && z >= 0 && z < LAYER) {
+        // Taşın seçilip seçilemeyeceğini kontrol et
+        if (!gameBoard.tiles[y][x][z].isOpen && !isSecondTileSelected) {
+            // Eğer hiçbir taş seçili değilse veya sadece bir taş seçiliyse, bu taş seçilebilir
+            if (!isFirstTileSelected || (selectedTile1.x != x || selectedTile1.y != y || selectedTile1.z != z)) {
+                // Üstteki taşın durumunu kontrol et
+                bool topTileEmpty = false;
+                if (z < LAYER - 1) {
+                    topTileEmpty = gameBoard.tiles[y][x][z + 1].value == -1; // Altındaki taşın olmamasını kontrol et
+                }
+                // Sağdaki taşın durumunu kontrol et
+                bool rightTileFilled = false;
+                if (x < BOARD_WIDTH_SIZE - 1) {
+                    rightTileFilled = gameBoard.tiles[y][x + 1][z].value != -1; // Sağdaki taşın olup olmadığını kontrol et
+                }
+                // Soldaki taşın durumunu kontrol et
+                bool leftTileFilled = false;
+                if (x > 0) {
+                    leftTileFilled = gameBoard.tiles[y][x - 1][z].value != -1; // Soldaki taşın olup olmadığını kontrol et
+                }
+                // Koşullara göre taşın seçilebilirliğini belirle
+                if (topTileEmpty || (!leftTileFilled || !rightTileFilled)) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}

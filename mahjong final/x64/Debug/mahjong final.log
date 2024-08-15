@@ -1,0 +1,39 @@
+﻿cl : command line  warning D9025: overriding '/sdl' with '/GS-'
+  mahjong final.c
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(126,11): warning C4244: 'function': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(132,9): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(154,9): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(224,9): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(341,87): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(341,139): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(341,145): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(341,158): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(373,91): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(373,119): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(424,87): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(424,139): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(424,145): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(424,158): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(455,91): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(455,119): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(488,66): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(488,75): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(488,90): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(488,103): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(499,71): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(499,80): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(499,95): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(499,108): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(508,71): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(508,80): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(508,95): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(508,108): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(629,27): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(630,27): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(631,27): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(639,27): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(640,27): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\mahjong final\mahjong final.c(641,27): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+  mahjong final.vcxproj -> C:\Users\Emrehan Metin\Desktop\M\Kod\C\Orta projeler\mahjong final\x64\Debug\mahjong final.exe
+  'pwsh.exe' is not recognized as an internal or external command,
+  operable program or batch file.
